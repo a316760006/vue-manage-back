@@ -6,3 +6,4 @@ logs
 .vscode
 .idea
 *vue-manage-back*
+config.yaml
