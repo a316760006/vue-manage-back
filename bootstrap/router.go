@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"vue-manage-back/app/middleware"
 	"vue-manage-back/global"
 	"vue-manage-back/routes"
 
@@ -15,7 +16,15 @@ import (
 )
 
 func setupRouter() *gin.Engine {
-	router := gin.Default()
+	if global.App.Config.App.Env == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+	router := gin.New()
+	router.Use(gin.Logger(), middleware.CustomRecovery())
+	// 跨域处理
+	router.Use(middleware.Cors())
+
+	// router := gin.Default()
 
 	// 前端项目静态资源
 	router.StaticFile("/", "./static/dist/index.html")
