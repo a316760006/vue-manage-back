@@ -2,6 +2,7 @@ package routes
 
 import (
 	"vue-manage-back/app/controllers/app"
+	"vue-manage-back/app/controllers/common"
 	"vue-manage-back/app/middleware"
 	"vue-manage-back/app/services"
 
@@ -39,5 +40,6 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 	{
 		authRouter.POST("/auth/info", app.Info)
 		authRouter.POST("/auth/logout", app.Logout)
+		authRouter.POST("/image_upload", common.ImageUpload)
 	}
 }
