@@ -1,13 +1,19 @@
 package app
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
 	"vue-manage-back/app/common/request"
 	"vue-manage-back/app/common/response"
 	"vue-manage-back/app/services"
+	"vue-manage-back/global"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/gorilla/websocket"
+	"go.uber.org/zap"
 )
 
 // Register 用户注册
@@ -65,4 +71,47 @@ func Logout(c *gin.Context) {
 		return
 	}
 	response.Success(c, nil)
+}
+
+var upgrader = websocket.Upgrader{
+	// 解决跨域问题
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+// websocket
+func Ws(c *gin.Context) {
+	//升级get请求为webSocket协议
+	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		global.App.Log.Error("websocket connection failed", zap.Any("err", err))
+		return
+	}
+	defer ws.Close()
+	for {
+		//读取ws中的数据
+		mt, message, err := ws.ReadMessage()
+		if err != nil {
+			fmt.Println("read:", err)
+			break
+		}
+		fmt.Printf("recv: %s", message)
+		// 每5秒返回一个心跳响应
+		ticker := time.NewTicker(5 * time.Second)
+		for _ = range ticker.C {
+			//写入ws数据
+
+			data := make(map[string]interface{})
+			data["code"] = 0
+			data["data"] = "{aaa:1,bbb:'心跳响应'}"
+			data["message"] = "ok"
+			msg, _ := json.Marshal(data)
+			err = ws.WriteMessage(mt, msg)
+		}
+		if err != nil {
+			fmt.Println("write:", err)
+			break
+		}
+	}
 }
