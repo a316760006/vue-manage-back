@@ -2,7 +2,6 @@ package bootstrap
 
 import (
 	"context"
-	"fmt"
 	"vue-manage-back/global"
 
 	"github.com/go-redis/redis/v8"
@@ -16,7 +15,6 @@ func InitializeRedis() *redis.Client {
 		DB:       global.App.Config.Redis.DB,       // use default DB
 	})
 	_, err := client.Ping(context.Background()).Result()
-	fmt.Printf("err: %v\n", err)
 	if err != nil {
 		global.App.Log.Error("Redis connect ping failed, err:", zap.Any("err", err))
 		return nil

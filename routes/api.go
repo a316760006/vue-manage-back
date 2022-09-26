@@ -44,4 +44,6 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		authRouter.POST("/image_upload", common.ImageUpload)
 	}
 	router.GET("/ws", app.Ws)
+	router.POST("/add_chicken_soup", common.AddChickenSoup)
+	router.GET("/getChickenSoup", common.GetChickenSoup)
 }

@@ -31,3 +31,17 @@ func (login Login) GetMessages() ValidatorMessages {
 		"password.required": "用户密码不能为空",
 	}
 }
+
+// 毒鸡汤结构体
+type ChickenSoup struct {
+	Text   string `form:"text" json:"text" binding:"required"`
+	TypeId string `form:"typeId" json:"typeId" binding:"required"`
+}
+
+// 自定义登录错误信息
+func (chickenSoup ChickenSoup) GetMessages() ValidatorMessages {
+	return ValidatorMessages{
+		"typeId.required": "鸡汤类型不能为空",
+		"text.required":   "鸡汤内容不能为空",
+	}
+}
